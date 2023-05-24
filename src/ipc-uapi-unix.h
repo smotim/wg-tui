@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include <sys/un.h>
 
+#include <configure.h>
+
 #define SOCK_PATH RUNSTATEDIR "/wireguard/"
 #define SOCK_SUFFIX ".sock"
 
