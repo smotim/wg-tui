@@ -5,7 +5,7 @@ Based on [wireguard-tools](https://git.zx2c4.com/wireguard-tools)
 
 ## Compile and install
 ```sh
-$ git clone https://github.com/smotim/wg-tui
+$ git clone https://github.com/team4665/wg-tui 
 $ cd wg-tui
 $ mkdir build
 $ cd build
