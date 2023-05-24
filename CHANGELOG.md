@@ -1,0 +1,9 @@
+- Added CMake support (``CMakeLists.txt``)
+- Removed Makefile
+- Added CMake auto generated file (``src/configure.h.in``, ``src/configure.c``)
+- Added clang format (``.clang-format``)
+- Changed git attributes (``.gitattribures``)
+    - ``*.h`` - C language
+    - ``*.h.in`` - C language
+- Changed git ignore (``.gitignore``)
+- Changed readme
