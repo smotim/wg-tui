@@ -3,8 +3,48 @@ import subprocess
 import npyscreen
 
 class FormOne(npyscreen.Form):
+
     def create(self):
-        self.text = self.add(npyscreen.TitleText, name="This is form one")
+        # Добавляем поля для ввода данных
+        self.address = self.add(npyscreen.TitleText, name="Address:")
+        self.private_key = self.add(npyscreen.TitleText, name="Private Key:")
+        self.dns = self.add(npyscreen.TitleText, name="DNS:")
+        self.public_key = self.add(npyscreen.TitleText, name="Public Key:")
+        self.allowed_ips = self.add(npyscreen.TitleText, name="Allowed IPs:")
+        self.endpoint = self.add(npyscreen.TitleText, name="Endpoint:")
+        #Должно быть Persistent Keepalive, но тогда ввод переезжает под заголовок. Если найдете как пофиксить, верните полное имя.
+        self.keepalive = self.add(npyscreen.TitleText, name="Keepalive:")
+        # Добавляем кнопку для сохранения данных в файл
+        self.save_button = self.add(npyscreen.ButtonPress, name="Save")
+        # Устанавливаем функцию, которая будет вызвана при нажатии на кнопку
+        self.save_button.whenPressed = self.save_config
+
+    def save_config(self):
+        # Получаем значения из полей ввода
+        address = self.address.value
+        private_key = self.private_key.value
+        dns = self.dns.value
+        public_key = self.public_key.value
+        allowed_ips = self.allowed_ips.value
+        endpoint = self.endpoint.value
+        keepalive = self.keepalive.value
+        # Формируем строку с конфигурацией wireguard
+        config = "[Interface]\n"
+        config += "Address = " + address + "\n"
+        config += "PrivateKey = " + private_key + "\n"
+        config += "DNS = " + dns + "\n"
+        config += "\n"
+        config += "[Peer]\n"
+        config += "PublicKey = " + public_key + "\n"
+        config += "AllowedIPs = " + allowed_ips + "\n"
+        config += "Endpoint = " + endpoint + "\n"
+        config += "PersistentKeepalive = " + keepalive + "\n"
+        # Открываем файл для записи в той же папке, где находится питон-файл
+        with open("wireguard.conf", "w") as f:
+            # Записываем конфигурацию в файл
+            f.write(config)
+            # Выводим сообщение об успешном сохранении
+            npyscreen.notify_confirm("Config saved to wireguard.conf", title="Success")
 
 ##Во второй форме реализован пример запуска команды в терминале, в которую подставляется ввод пользователя. После выполнения команды выводится ее результат, но мы потом сможем выводить уже его интерпретацию
 class FormTwo(npyscreen.Form):
