@@ -1,14 +1,17 @@
-// SPDX-License-Identifier: GPL-2.0 OR MIT
-/*
+/* SPDX-License-Identifier: GPL-2.0 */
+/* wg-tui.c: Run application.
+ *
  * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+ * Copyright (C) 2023 Saveliy Pototskiy (savalione.com) <monologuesplus@gmail.com>
  */
 
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
+#include <configure.h>
+
 #include "subcommands.h"
-#include "version.h"
 
 const char *PROG_NAME;
 
@@ -42,7 +45,7 @@ int main(int argc, const char *argv[])
 	PROG_NAME = argv[0];
 
 	if (argc == 2 && (!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version") || !strcmp(argv[1], "version"))) {
-		printf("wireguard-tools v%s - https://git.zx2c4.com/wireguard-tools/\n", WIREGUARD_TOOLS_VERSION);
+		printf("wg-tui v%s - https://github.com/team4665/wg-tui/\n", WG_TUI_VERSION);
 		return 0;
 	}
 	if (argc == 2 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help") || !strcmp(argv[1], "help"))) {

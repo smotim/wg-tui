@@ -9,3 +9,6 @@
 - Changed readme
 - Removed man pages
 - Added clangd rule
+- Removed ``version.h``
+- Renamed ``wg.c`` -> ``wg-tui.c``
+- Changed links in application description (``wg-tui.c``)

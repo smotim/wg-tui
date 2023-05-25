@@ -57,7 +57,7 @@ set(WG_TUI_SRC
     src/showconf.c
     src/curve25519.c
     src/set.c
-    src/wg.c
+    src/wg-tui.c
     src/show.c
     src/pubkey.c
     src/configure.c
