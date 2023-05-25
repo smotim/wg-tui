@@ -5,14 +5,17 @@ Based on [wireguard-tools](https://git.zx2c4.com/wireguard-tools)
 
 ## Compile and install
 ```sh
-$ git clone https://github.com/smotim/wg-tui
+$ git clone https://github.com/team4665/wg-tui 
 $ cd wg-tui
 $ mkdir build
 $ cd build
 $ cmake ..
 $ make
 ```
-
+## Launch
+```sh
+$ python3 python/main.py
+```
 ## Build options
 * ``WG_TUI_INSTALL`` Generate the install target
 * ``WG_TUI_PREFIX`` (default: ``/usr``): 
