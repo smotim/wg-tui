@@ -12,3 +12,5 @@
 - Removed ``version.h``
 - Renamed ``wg.c`` -> ``wg-tui.c``
 - Changed links in application description (``wg-tui.c``)
+- Added ``.vscode`` directory (sorry)
+- Added application build info (``wg-tui.c``, ``print_build_info``)
