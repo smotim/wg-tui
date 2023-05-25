@@ -32,5 +32,6 @@ $ python3 python/main.py
 * Authors:
   * Saveliy Pototskiy ([savalione.com](https://savalione.com))
   * Timofey Smolin ([github.com/smotim](https://github.com/smotim))
+  * Timur Zhakeev (https://github.com/Zhakey567)
 * Link to Github: https://github.com/smotim/wg-tui
 * Date of creation: 2023-05-25
