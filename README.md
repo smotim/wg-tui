@@ -12,7 +12,10 @@ $ cd build
 $ cmake ..
 $ make
 ```
-
+## Launch
+```sh
+$ python3 /python/main.py
+```
 ## Build options
 * ``WG_TUI_INSTALL`` Generate the install target
 * ``WG_TUI_PREFIX`` (default: ``/usr``): 
