@@ -14,7 +14,7 @@ $ make
 ```
 ## Launch
 ```sh
-$ python3 /python/main.py
+$ python3 python/main.py
 ```
 ## Build options
 * ``WG_TUI_INSTALL`` Generate the install target
