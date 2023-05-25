@@ -8,3 +8,4 @@
 - Changed git ignore (``.gitignore``)
 - Changed readme
 - Removed man pages
+- Added clangd rule
