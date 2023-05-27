@@ -1,6 +1,8 @@
-// SPDX-License-Identifier: GPL-2.0 OR MIT
-/*
+/* SPDX-License-Identifier: GPL-2.0 */
+/* show.c: Main commands to work with.
+ *
  * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+ * Copyright (C) 2023 Saveliy Pototskiy (savalione.com) <monologuesplus@gmail.com>
  */
 
 #include <arpa/inet.h>
@@ -451,4 +453,58 @@ int show_main(int argc, const char *argv[])
 		free_wgdevice(device);
 	}
 	return ret;
+}
+
+int show(char *device)
+{
+    int ret = 0;
+
+	struct wgdevice *wg_device = NULL;
+
+	if (ipc_get_device(&wg_device, device) < 0)
+    {
+		// perror("Unable to access interface");
+        printf("Unable to access interface: %s\n", device);
+		return 1;
+	}
+
+	// if (argc == 3) {
+	// 	if (!ugly_print(device, argv[2], false))
+	// 		ret = 1;
+	// } else
+
+	pretty_print(wg_device);
+
+	free_wgdevice(wg_device);
+    return ret;
+}
+
+int show_interfaces()
+{
+	char *interfaces, *interface;
+
+	interfaces = ipc_list_devices();
+	if (!interfaces)
+    {
+		// perror("Unable to list interfaces");
+           printf("Unable to list interfaces\n");
+		return 1;
+	}
+
+    int interface_count = 0;
+
+	interface = interfaces;
+	for (size_t len = 0; (len = strlen(interface)); interface += len + 1)
+	{
+        printf("%s%c", interface, strlen(interface + len + 1) ? ' ' : '\n');
+        interface_count++;
+    }
+	free(interfaces);
+
+    if(interface_count == 0)
+    {
+        printf("Interfaces not found\n");
+    }
+
+    return 0;
 }

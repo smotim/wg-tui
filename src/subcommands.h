@@ -1,8 +1,9 @@
-/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-/*
+/* SPDX-License-Identifier: GPL-2.0 */
+/* subcommands.h: Definitions of commands.
+ *
  * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+ * Copyright (C) 2023 Saveliy Pototskiy (savalione.com) <monologuesplus@gmail.com>
  */
-
 #ifndef SUBCOMMANDS_H
 #define SUBCOMMANDS_H
 
@@ -13,5 +14,8 @@ int set_main(int argc, const char *argv[]);
 int setconf_main(int argc, const char *argv[]);
 int genkey_main(int argc, const char *argv[]);
 int pubkey_main(int argc, const char *argv[]);
+
+int show(char *device);
+int show_interfaces();
 
 #endif

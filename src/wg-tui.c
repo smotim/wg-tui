@@ -5,6 +5,7 @@
  * Copyright (C) 2023 Saveliy Pototskiy (savalione.com) <monologuesplus@gmail.com>
  */
 
+#include <stdio.h>
 #include <stddef.h>
 #include <string.h>
 #include <getopt.h>
@@ -16,65 +17,172 @@
 
 const char *PROG_NAME;
 
-static const struct {
-	const char *subcommand;
-	int (*function)(int, const char**);
-	const char *description;
-} subcommands[] = {
-	{ "show", show_main, "Shows the current configuration and device information" },
-	{ "showconf", showconf_main, "Shows the current configuration of a given WireGuard interface, for use with `setconf'" },
-	{ "set", set_main, "Change the current configuration, add peers, remove peers, or change peers" },
-	{ "setconf", setconf_main, "Applies a configuration file to a WireGuard interface" },
-	{ "addconf", setconf_main, "Appends a configuration file to a WireGuard interface" },
-	{ "syncconf", setconf_main, "Synchronizes a configuration file to a WireGuard interface" },
-	{ "genkey", genkey_main, "Generates a new private key and writes it to stdout" },
-	{ "genpsk", genkey_main, "Generates a new preshared key and writes it to stdout" },
-	{ "pubkey", pubkey_main, "Reads a private key from stdin and writes a public key to stdout" }
-};
+// static const struct {
+// 	const char *subcommand;
+// 	int (*function)(int, const char**);
+// 	const char *description;
+// } subcommands[] = {
+// 	{ "show", show_main, "Shows the current configuration and device information" },
+// 	{ "showconf", showconf_main, "Shows the current configuration of a given WireGuard interface, for use with `setconf'" },
+// 	{ "set", set_main, "Change the current configuration, add peers, remove peers, or change peers" },
+// 	{ "setconf", setconf_main, "Applies a configuration file to a WireGuard interface" },
+// 	{ "addconf", setconf_main, "Appends a configuration file to a WireGuard interface" },
+// 	{ "syncconf", setconf_main, "Synchronizes a configuration file to a WireGuard interface" },
+// 	{ "genkey", genkey_main, "Generates a new private key and writes it to stdout" },
+// 	{ "genpsk", genkey_main, "Generates a new preshared key and writes it to stdout" },
+// 	{ "pubkey", pubkey_main, "Reads a private key from stdin and writes a public key to stdout" }
+// };
 
-static void show_usage(FILE *file)
-{
-	fprintf(file, "Usage: %s <cmd> [<args>]\n\n", PROG_NAME);
-	fprintf(file, "Available subcommands:\n");
-	for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i)
-		fprintf(file, "  %s: %s\n", subcommands[i].subcommand, subcommands[i].description);
-	fprintf(file, "You may pass `--help' to any of these subcommands to view usage.\n");
-}
+// static void show_usage(FILE *file)
+// {
+// 	fprintf(file, "Usage: %s <cmd> [<args>]\n\n", PROG_NAME);
+// 	fprintf(file, "Available subcommands:\n");
+// 	for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i)
+// 		fprintf(file, "  %s: %s\n", subcommands[i].subcommand, subcommands[i].description);
+// 	fprintf(file, "You may pass `--help' to any of these subcommands to view usage.\n");
+// }
 
-int main(int argc, const char *argv[])
+/* getopt options */
+// #define OPT_DEVICE      1000
+#define OPT_SHOWCONF    1001
+#define OPT_SET         1002
+#define OPT_SETCONF     1003
+#define OPT_ADDCONF     1004
+#define OPT_SYNCCONF    1005
+#define OPT_GENKEY      1006
+#define OPT_GENPSK      1007
+#define OPT_PUBKEY      1008
+
+
+int main(int argc, char **argv)
 {
 	PROG_NAME = argv[0];
 
-	if (argc == 2 && (!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version") || !strcmp(argv[1], "version"))) {
-		printf("wg-tui v%s - https://github.com/team4665/wg-tui/\n", WG_TUI_VERSION);
-		return 0;
-	}
-	if (argc == 2 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help") || !strcmp(argv[1], "help"))) {
-		show_usage(stdout);
-		return 0;
-	}
+    if(argc <= 1)
+        return print_help(stdout);
 
-	if (argc == 1) {
-		static const char *new_argv[] = { "show", NULL };
-		return show_main(1, new_argv);
-	}
+    /* Options */
+    static struct option long_options[] =
+        {
+            {"help", no_argument, 0, 'h'},
+            {"version", no_argument, 0, 'v'},
+            {"build-info", no_argument, 0, 'b'},
 
-	for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i) {
-		if (!strcmp(argv[1], subcommands[i].subcommand))
-			return subcommands[i].function(argc - 1, argv + 1);
-	}
+            {"device", required_argument, 0, 'd'},
+            {"show", optional_argument, 0, 's'},
 
-	fprintf(stderr, "Invalid subcommand: `%s'\n", argv[1]);
-	show_usage(stderr);
+            {"showconf", required_argument, 0, OPT_SHOWCONF},
+            {"set", required_argument, 0, OPT_SET},
+            {"setconf", required_argument, 0, OPT_SETCONF},
+            {"addconf", required_argument, 0, OPT_ADDCONF},
+            {"syncconf", required_argument, 0, OPT_SYNCCONF},
+            {"genkey", required_argument, 0, OPT_GENKEY},
+            {"genpsk", required_argument, 0, OPT_GENPSK},
+            {"pubkey", required_argument, 0, OPT_PUBKEY},
+
+            {0, 0, 0, 0}
+        };
+    
+    char *device = "NULL";
+
+    int opts;
+    while((opts = getopt_long(argc, argv, "hvbs::d:", long_options, NULL)) != -1)
+    {
+        switch (opts)
+        {
+            case 'd':
+                printf("device: %s\n", optarg);
+                device = optarg;
+                break;
+            case 'h':
+                return print_help(stdout);
+                break;
+            case 'v':
+                return print_version(stdout);
+                break;
+            case 'b':
+                return print_build_info(stdout);
+                break;
+            case 's':
+                if(optarg == NULL)
+                {
+                    if(strcmp(device, "NULL"))
+                        return show(device);
+                    else
+                    {
+                        fprintf(stdout, "You need to specify device via --device [name]\n");
+                        return -1;
+                    }
+                }
+                else if(!strcmp(optarg, "interfaces"))
+                    return show_interfaces();
+                else
+                {
+                    fprintf(stdout, "-s, --show %s (key %s not found)\n", optarg, optarg);
+                    return -1;
+                }
+                break;
+            case OPT_SHOWCONF:
+                printf("OPT_SHOWCONF: %s\n", optarg);
+                return 0;
+                break;
+            case OPT_SET:
+                return 0;
+                break;
+            case OPT_SETCONF:
+                return 0;
+                break;
+            case OPT_ADDCONF:
+                return 0;
+                break;
+            case OPT_SYNCCONF:
+                return 0;
+                break;
+            case OPT_GENKEY:
+                return 0;
+                break;
+            case OPT_GENPSK:
+                return 0;
+                break;
+            case OPT_PUBKEY:
+                return 0;
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+
+	// for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i) {
+	// 	if (!strcmp(argv[1], subcommands[i].subcommand))
+	// 		return subcommands[i].function(argc - 1, argv + 1);
+	// }
+
+	// fprintf(stderr, "Invalid subcommand: `%s'\n", argv[1]);
+	// show_usage(stderr);
 	return 1;
 }
 
 int print_help(FILE *file)
 {
-	fprintf(file, "Usage: %s <cmd> [<args>]\n", PROG_NAME);
-	printf("args:");
-	printf("    -h, --help          Display help information and exit");
-	printf("    -u, --build-info    Display build information end exit");
+	fprintf(file, "Usage: %s [options]\n", PROG_NAME);
+	printf("options:\n");
+	printf("    -h, --help              Display help information and exit\n");
+    printf("    -v, --version           Display version information and exit\n");
+	printf("    -b, --build-info        Display build information end exit\n");
+    printf("    -s, --show [options]    Shows the current configuration and device information\n");
+    printf("        options:\n");
+    printf("            none\n");
+    printf("            all\n");
+    printf("            interfaces\n");
+    printf("        --showconf          Shows the current configuration of a given WireGuard interface, for use with --setconf\n");
+    printf("        --set               Change the current configuration, add peers, remove peers, or change peers\n");
+    printf("        --setconf           Applies a configuration file to a WireGuard interface\n");
+    printf("        --addconf           Appends a configuration file to a WireGuard interface\n");
+    printf("        --syncconf          Synchronizes a configuration file to a WireGuard interface\n");
+    printf("        --genkey            Generates a new private key and writes it to stdout\n");
+    printf("        --genpsk            Generates a new preshared key and writes it to stdout\n");
+    printf("        --pubkey            Reads a private key from stdin and writes a public key to stdout\n");
 	return 0;
 }
 
@@ -144,4 +252,10 @@ int print_build_info(FILE *file)
     fprintf(file, "  Use systemd units: %s\n", use_systemdunits);
 
 	return 0;
+}
+
+int print_version(FILE *file)
+{
+    fprintf(file, "wg-tui version: %s\n", WG_TUI_VERSION);
+    return 0;
 }
