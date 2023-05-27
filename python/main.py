@@ -126,7 +126,16 @@ class FormFive(npyscreen.Form):
 
 class MenuForm(npyscreen.FormWithMenus):
     def create(self):
-        self.text = self.add(npyscreen.TitleText, name="This is the menu form")
+        ascii_art = r"""
+____    __    ____  _______        .___________. __    __   __  
+\   \  /  \  /   / /  _____|       |           ||  |  |  | |  | 
+ \   \/    \/   / |  |  __   ______`---|  |----`|  |  |  | |  | 
+  \            /  |  | |_ | |______|   |  |     |  |  |  | |  | 
+   \    /\    /   |  |__| |            |  |     |  `--'  | |  | 
+    \__/  \__/     \______|            |__|      \______/  |__| 
+                                                                
+        """
+        self.add(npyscreen.MultiLineEdit, value=ascii_art, editable=False)
         ##выход в меню не работает почему-то
         menu = self.add_menu(name="Menu", shortcut="^M")
         menu.addItem(text="Form One", onSelect=self.switch_to_form_one)
@@ -154,6 +163,7 @@ class MenuForm(npyscreen.FormWithMenus):
     def exit_app(self):
         self.parentApp.setNextForm(None)
         self.editing = False
+
 
 class MenuApp(npyscreen.NPSAppManaged):
     def onStart(self):
