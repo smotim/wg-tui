@@ -17,6 +17,7 @@ class FormOne(npyscreen.Form):
         self.save_button = self.add(npyscreen.ButtonPress, name="Save")
         self.save_button.whenPressed = self.save_config
 
+
     def save_config(self):
         address = self.address.value
         private_key = self.private_key.value
@@ -75,7 +76,6 @@ class FormOne(npyscreen.Form):
         return file_number
 
 
-##Во второй форме реализован пример запуска команды в терминале, в которую подставляется ввод пользователя. После выполнения команды выводится ее результат, но мы потом сможем выводить уже его интерпретацию
 class FormTwo(npyscreen.Form):
     def create(self):
         self.config_file = self.add(npyscreen.TitleText, name="Path to .conf file:")
@@ -86,30 +86,38 @@ class FormTwo(npyscreen.Form):
         self.disconnect_button = self.add(npyscreen.ButtonPress, name="Disconnect")
         self.disconnect_button.whenPressed = self.disconnect_wg_quick
 
+    def run_command_with_password(self, command, password):
+        sudo_command = f"echo '{password}' | sudo -S {command}"
+        try:
+            output = subprocess.check_output(sudo_command, shell=True, stderr=subprocess.STDOUT)
+            return output.decode()
+        except subprocess.CalledProcessError as e:
+            return e.output.decode()
+
     def connect_wg_quick(self):
         config_path = self.config_file.value
         password = self.password.value
 
         # Проверяем наличие активного подключения
-        check_command = "sudo wg show"
+        check_command = "wg show"
         try:
-            check_output = subprocess.check_output(check_command, shell=True)
+            check_output = self.run_command_with_password(check_command, password)
         except subprocess.CalledProcessError:
             check_output = ""
 
-        if "interface" in check_output.decode():
+        if "interface" in check_output:
             # Если есть активное подключение, предлагаем его отключить
             npyscreen.notify_confirm(
                 "There is an active WireGuard connection. Disconnect it before establishing a new connection.",
                 title="Warning")
         else:
             # Если нет активного подключения, устанавливаем новое подключение
-            command = f"sudo -S wg-quick up {config_path}"
+            command = f"wg-quick up {config_path}"
             try:
-                output = subprocess.check_output(command, shell=True, input=password.encode(), stderr=subprocess.STDOUT)
+                output = self.run_command_with_password(command, password)
                 result = "WireGuard connection established successfully."
             except subprocess.CalledProcessError as e:
-                result = f"Error occurred while establishing WireGuard connection:\n{e.output.decode()}"
+                result = f"Error occurred while establishing WireGuard connection:\n{e.output}"
 
             self.output.values = result.split("\n")
             self.display()
@@ -118,12 +126,12 @@ class FormTwo(npyscreen.Form):
         config_path = self.config_file.value
         password = self.password.value
 
-        command = f"sudo -S wg-quick down {config_path}"
+        command = f"wg-quick down {config_path}"
         try:
-            output = subprocess.check_output(command, shell=True, input=password.encode(), stderr=subprocess.STDOUT)
+            output = self.run_command_with_password(command, password)
             result = "WireGuard connection disconnected successfully."
         except subprocess.CalledProcessError as e:
-            result = f"Error occurred while disconnecting WireGuard connection:\n{e.output.decode()}"
+            result = f"Error occurred while disconnecting WireGuard connection:\n{e.output}"
 
         self.output.values = result.split("\n")
         self.display()
@@ -201,9 +209,6 @@ ____    __    ____  _______        .___________. __    __   __
     def switch_to_form_five(self):
         self.parentApp.switchForm("FIVE")
 
-    def exit_app(self):
-        self.parentApp.setNextForm(None)
-        self.editing = False
 
     def on_ok(self):
         self.parentApp.switchForm("MAIN")
