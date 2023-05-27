@@ -26,18 +26,31 @@ class FormOne(npyscreen.Form):
         endpoint = self.endpoint.value
         keepalive = self.keepalive.value
 
+        if not address or not private_key or not public_key or not allowed_ips or not endpoint or not keepalive:
+            result = npyscreen.notify_yes_no("Some fields are empty. Do you want to save the partial configuration?", title="Confirmation")
+            if not result:
+                return
+
         config = "[Interface]\n"
-        config += "Address = " + address + "\n"
-        config += "PrivateKey = " + private_key + "\n"
-        config += "DNS = " + dns + "\n"
+        if address:
+            config += "Address = " + address + "\n"
+        if private_key:
+            config += "PrivateKey = " + private_key + "\n"
+        if dns:
+            config += "DNS = " + dns + "\n"
         config += "\n"
 
-        if public_key:
+        if public_key or allowed_ips or endpoint or keepalive:
             config += "[Peer]\n"
-            config += "PublicKey = " + public_key + "\n"
-            config += "AllowedIPs = " + allowed_ips + "\n"
-            config += "Endpoint = " + endpoint + "\n"
-            config += "PersistentKeepalive = " + keepalive + "\n"
+
+            if public_key:
+                config += "PublicKey = " + public_key + "\n"
+            if allowed_ips:
+                config += "AllowedIPs = " + allowed_ips + "\n"
+            if endpoint:
+                config += "Endpoint = " + endpoint + "\n"
+            if keepalive:
+                config += "PersistentKeepalive = " + keepalive + "\n"
 
         configs_dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "configs")
         if not os.path.exists(configs_dir):
@@ -194,6 +207,7 @@ ____    __    ____  _______        .___________. __    __   __
 
     def on_ok(self):
         self.parentApp.switchForm("MAIN")
+
 
 
 class MenuApp(npyscreen.NPSAppManaged):
