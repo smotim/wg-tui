@@ -157,8 +157,10 @@ ____    __    ____  _______        .___________. __    __   __
     \__/  \__/     \______|            |__|      \______/  |__| 
                                                                 
         """
+        self.add(npyscreen.TitleFixedText, name="To close the application, press Ctrl+Q", editable=False)
         self.add(npyscreen.MultiLineEdit, value=ascii_art, editable=False)
         ##выход в меню не работает почему-то
+        self.add_handlers({"^Q": self.exit_app})
         menu = self.add_menu(name="Menu", shortcut="^X")
         menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one)
         menu.addItem(text="Connect", onSelect=self.switch_to_form_two)
@@ -166,6 +168,10 @@ ____    __    ____  _______        .___________. __    __   __
         menu.addItem(text="Config list(WIP)", onSelect=self.switch_to_form_four)
         menu.addItem(text="Settings (WIP)", onSelect=self.switch_to_form_five)
         menu.addItem(text="Exit", onSelect=self.exit_app)
+
+
+    def exit_app(self, *args, **kwargs):
+        self.parentApp.switchForm("MAIN")
 
     def switch_to_form_one(self):
         self.parentApp.switchForm("ONE")
