@@ -3,6 +3,7 @@ import subprocess
 import getpass
 import npyscreen
 
+
 class FormOne(npyscreen.Form):
 
     def create(self):
@@ -60,6 +61,7 @@ class FormOne(npyscreen.Form):
 
         return file_number
 
+
 ##Во второй форме реализован пример запуска команды в терминале, в которую подставляется ввод пользователя. После выполнения команды выводится ее результат, но мы потом сможем выводить уже его интерпретацию
 class FormTwo(npyscreen.Form):
     def create(self):
@@ -84,7 +86,9 @@ class FormTwo(npyscreen.Form):
 
         if "interface" in check_output.decode():
             # Если есть активное подключение, предлагаем его отключить
-            npyscreen.notify_confirm("There is an active WireGuard connection. Disconnect it before establishing a new connection.", title="Warning")
+            npyscreen.notify_confirm(
+                "There is an active WireGuard connection. Disconnect it before establishing a new connection.",
+                title="Warning")
         else:
             # Если нет активного подключения, устанавливаем новое подключение
             command = f"sudo -S wg-quick up {config_path}"
@@ -111,6 +115,7 @@ class FormTwo(npyscreen.Form):
         self.output.values = result.split("\n")
         self.display()
 
+#TODO Если после запуска приложения зайти сразу сюда, появится системный запрос sudo пароля. Желательно заменить интрейсным
 class FormThree(npyscreen.Form):
     def create(self):
         self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
@@ -130,13 +135,16 @@ class FormThree(npyscreen.Form):
 
         self.display()
 
+
 class FormFour(npyscreen.Form):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form four")
 
+
 class FormFive(npyscreen.Form):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form five")
+
 
 class MenuForm(npyscreen.FormWithMenus):
     def create(self):
@@ -151,12 +159,12 @@ ____    __    ____  _______        .___________. __    __   __
         """
         self.add(npyscreen.MultiLineEdit, value=ascii_art, editable=False)
         ##выход в меню не работает почему-то
-        menu = self.add_menu(name="Menu", shortcut="^M")
-        menu.addItem(text="Form One", onSelect=self.switch_to_form_one)
-        menu.addItem(text="Ls command", onSelect=self.switch_to_form_two)
-        menu.addItem(text="Form Three", onSelect=self.switch_to_form_three)
-        menu.addItem(text="Form Four", onSelect=self.switch_to_form_four)
-        menu.addItem(text="Form Five", onSelect=self.switch_to_form_five)
+        menu = self.add_menu(name="Menu", shortcut="^X")
+        menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one)
+        menu.addItem(text="Connect", onSelect=self.switch_to_form_two)
+        menu.addItem(text="Connection Status", onSelect=self.switch_to_form_three)
+        menu.addItem(text="Config list(WIP)", onSelect=self.switch_to_form_four)
+        menu.addItem(text="Settings (WIP)", onSelect=self.switch_to_form_five)
         menu.addItem(text="Exit", onSelect=self.exit_app)
 
     def switch_to_form_one(self):
@@ -178,15 +186,19 @@ ____    __    ____  _______        .___________. __    __   __
         self.parentApp.setNextForm(None)
         self.editing = False
 
+    def on_ok(self):
+        self.parentApp.switchForm("MAIN")
+
 
 class MenuApp(npyscreen.NPSAppManaged):
     def onStart(self):
-        self.addForm("MAIN", MenuForm, name="Menu")
-        self.addForm("ONE", FormOne, name="Form One")
-        self.addForm("TWO", FormTwo, name="Form Two")
-        self.addForm("THREE", FormThree, name="Form Three")
-        self.addForm("FOUR", FormFour, name="Form Four")
-        self.addForm("FIVE", FormFive, name="Form Five")
+        self.addForm("MAIN", MenuForm, name="WG-TUI")
+        self.addForm("ONE", FormOne, name="Generate Config")
+        self.addForm("TWO", FormTwo, name="Connect")
+        self.addForm("THREE", FormThree, name="Connection Status")
+        self.addForm("FOUR", FormFour, name="Config list(WIP)")
+        self.addForm("FIVE", FormFive, name="Settings (WIP)")
+
 
 if __name__ == "__main__":
     app = MenuApp()
