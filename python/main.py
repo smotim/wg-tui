@@ -1,5 +1,5 @@
 import subprocess
-
+import getpass
 import npyscreen
 
 class FormOne(npyscreen.Form):
@@ -49,24 +49,72 @@ class FormOne(npyscreen.Form):
 ##Во второй форме реализован пример запуска команды в терминале, в которую подставляется ввод пользователя. После выполнения команды выводится ее результат, но мы потом сможем выводить уже его интерпретацию
 class FormTwo(npyscreen.Form):
     def create(self):
-        self.argument = self.add(npyscreen.TitleText, name="Argument:")
+        self.config_file = self.add(npyscreen.TitleText, name="Path to .conf file:")
+        self.password = self.add(npyscreen.TitlePassword, name="Password:")
         self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
-        self.run_button = self.add(npyscreen.ButtonPress, name="Run")
-        self.run_button.whenPressed = self.run_ls
+        self.connect_button = self.add(npyscreen.ButtonPress, name="Connect")
+        self.connect_button.whenPressed = self.connect_wg_quick
+        self.disconnect_button = self.add(npyscreen.ButtonPress, name="Disconnect")
+        self.disconnect_button.whenPressed = self.disconnect_wg_quick
 
-    def run_ls(self):
-        arg = self.argument.value
-        command = f"ls {arg}"
-        output = subprocess.run(command, shell=True, capture_output=True)
-        if output.returncode == 0:
-            result = output.stdout.decode()
+    def connect_wg_quick(self):
+        config_path = self.config_file.value
+        password = self.password.value
+
+        # Проверяем наличие активного подключения
+        check_command = "sudo wg show"
+        try:
+            check_output = subprocess.check_output(check_command, shell=True)
+        except subprocess.CalledProcessError:
+            check_output = ""
+
+        if "interface" in check_output.decode():
+            # Если есть активное подключение, предлагаем его отключить
+            npyscreen.notify_confirm("There is an active WireGuard connection. Disconnect it before establishing a new connection.", title="Warning")
         else:
-            result = output.stderr.decode()
+            # Если нет активного подключения, устанавливаем новое подключение
+            command = f"sudo -S wg-quick up {config_path}"
+            try:
+                output = subprocess.check_output(command, shell=True, input=password.encode(), stderr=subprocess.STDOUT)
+                result = "WireGuard connection established successfully."
+            except subprocess.CalledProcessError as e:
+                result = f"Error occurred while establishing WireGuard connection:\n{e.output.decode()}"
+
+            self.output.values = result.split("\n")
+            self.display()
+
+    def disconnect_wg_quick(self):
+        config_path = self.config_file.value
+        password = self.password.value
+
+        command = f"sudo -S wg-quick down {config_path}"
+        try:
+            output = subprocess.check_output(command, shell=True, input=password.encode(), stderr=subprocess.STDOUT)
+            result = "WireGuard connection disconnected successfully."
+        except subprocess.CalledProcessError as e:
+            result = f"Error occurred while disconnecting WireGuard connection:\n{e.output.decode()}"
+
         self.output.values = result.split("\n")
         self.display()
+
 class FormThree(npyscreen.Form):
     def create(self):
-        self.text = self.add(npyscreen.TitleText, name="This is form three")
+        self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
+        self.refresh_button = self.add(npyscreen.ButtonPress, name="Refresh")
+        self.refresh_button.whenPressed = self.refresh_wg_show
+
+    def beforeEditing(self):
+        self.refresh_wg_show()
+
+    def refresh_wg_show(self):
+        command = "sudo wg show"
+        try:
+            output = subprocess.check_output(command, shell=True)
+            self.output.values = output.decode().split("\n")
+        except subprocess.CalledProcessError as e:
+            self.output.values = [f"Error occurred while executing 'wg show': {e.output.decode()}"]
+
+        self.display()
 
 class FormFour(npyscreen.Form):
     def create(self):
