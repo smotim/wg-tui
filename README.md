@@ -12,21 +12,26 @@ $ cd build
 $ cmake ..
 $ make
 ```
+
 ## Launch
 ```sh
 $ python3 python/main.py
 ```
+
 ## Build options
 * ``WG_TUI_INSTALL`` Generate the install target
-* ``WG_TUI_PREFIX`` (default: ``/usr``): 
-* ``WG_TUI_BINDIR`` (default: ``${WG_TUI_PREFIX}/bin``): 
-* ``WG_TUI_LIBDIR`` (default: ``${WG_TUI_PREFIX}/lib``): 
-* ``WG_TUI_MANDIR`` (default: ``${WG_TUI_PREFIX}/share/man``): 
-* ``WG_TUI_BASHCOMPDIR`` (default: ``${WG_TUI_PREFIX}/share/bash-completion/completions``): 
-* ``WG_TUI_RUNSTATEDIR`` (default: ``/var/lib``): 
-* ``WG_TUI_WITH_BASHCOMPLETION`` (default: ``OFF``): Decides whether or not bash completion files for the tools are installed
-* ``WG_TUI_WITH_WGQUICK`` (default: ``OFF``): Decides whether or not the wg-quick(8) script is installed
-* ``WG_TUI_WITH_SYSTEMDUNITS`` (default: ``OFF``): Decides whether or not systemd units are installed for wg-quick(8)
+* ``WG_TUI_BINDIR`` (default: ``${CMAKE_INSTALL_PREFIX}/bin``): Directory for binaries
+* ``WG_TUI_LIBDIR`` (default: ``${CMAKE_INSTALL_PREFIX}/lib``): Directory for libraries
+* ``WG_TUI_INCDIR`` (default: ``${CMAKE_INSTALL_PREFIX}/include``): Directory for includes
+* ``WG_TUI_MANDIR`` (default: ``${CMAKE_INSTALL_PREFIX}/share/man``): Directory for man pages
+* ``WG_TUI_BASHCOMPDIR`` (default: ``${CMAKE_INSTALL_PREFIX}/share/bash-completion/completions``): Directory for bash completion files
+* ``WG_TUI_SYSTEMD`` (default: ``${CMAKE_INSTALL_PREFIX}/systemd``): Directory for systemd files
+* ``WG_TUI_RUNSTATEDIR`` (default: ``${CMAKE_INSTALL_LIBDIR}``): Run state dir
+* ``WG_TUI_WITH_INCLUDE`` (default: ``ON``): Decides whether or not include files for the tools are installed
+* ``WG_TUI_WITH_BASHCOMPLETION`` (default: ``ON``): Decides whether or not bash completion files for the tools are installed
+* ``WG_TUI_WITH_MAN`` (default: ``ON``): Decides whether or not man files for the tools are installed
+* ``WG_TUI_WITH_WGQUICK`` (default: ``ON``): Decides whether or not the wg-tui script is installed
+* ``WG_TUI_WITH_SYSTEMDUNITS`` (default: ``ON``): Decides whether or not systemd units are installed for wg-tui
 
 ## Additional information
 * Authors:

@@ -22,16 +22,19 @@ endif ()
 # Options
 option(WG_TUI_INSTALL "Generate the install target" ${WG_TUI_MASTER_PROJECT})
 
-set(WG_TUI_PREFIX "/usr" CACHE STRING "Prefix directory for installing wg-tui")
-set(WG_TUI_BINDIR "${WG_TUI_PREFIX}/bin" CACHE STRING "Directory for binaries")
-set(WG_TUI_LIBDIR "${WG_TUI_PREFIX}/lib" CACHE STRING "Directory for libraries")
-set(WG_TUI_MANDIR "${WG_TUI_PREFIX}/share/man" CACHE STRING "Directory for man")
-set(WG_TUI_BASHCOMPDIR "${WG_TUI_PREFIX}/share/bash-completion/completions" CACHE STRING "Directory for bash completion files")
-set(WG_TUI_RUNSTATEDIR "/var/lib" CACHE STRING "Run state dir")
+set(WG_TUI_BINDIR "${CMAKE_INSTALL_BINDIR}" CACHE STRING "Directory for binaries")
+set(WG_TUI_LIBDIR "${CMAKE_INSTALL_LIBDIR}" CACHE STRING "Directory for libraries")
+set(WG_TUI_INCDIR "${CMAKE_INSTALL_PREFIX}/include" CACHE STRING "Directory for includes")
+set(WG_TUI_MANDIR "${CMAKE_INSTALL_PREFIX}/share/man" CACHE STRING "Directory for man pages")
+set(WG_TUI_BASHCOMPDIR "${CMAKE_INSTALL_PREFIX}/share/bash-completion/completions" CACHE STRING "Directory for bash completion files")
+set(WG_TUI_SYSTEMD "${CMAKE_INSTALL_PREFIX}/systemd" CACHE STRING "Directory for systemd files")
+set(WG_TUI_RUNSTATEDIR "${CMAKE_INSTALL_LIBDIR}" CACHE STRING "Run state dir")
 
-option(WG_TUI_WITH_BASHCOMPLETION "Decides whether or not bash completion files for the tools are installed" OFF)
-option(WG_TUI_WITH_WGQUICK "Decides whether or not the wg-quick(8) script is installed" OFF)
-option(WG_TUI_WITH_SYSTEMDUNITS "Decides whether or not systemd units are installed for wg-quick(8)" OFF)
+option(WG_TUI_WITH_INCLUDE "Decides whether or not include files for the tools are installed" ON)
+option(WG_TUI_WITH_BASHCOMPLETION "Decides whether or not bash completion files for the tools are installed" ON)
+option(WG_TUI_WITH_MAN "Decides whether or not man files for the tools are installed" ON)
+option(WG_TUI_WITH_WGQUICK "Decides whether or not the wg-tui script is installed" ON)
+option(WG_TUI_WITH_SYSTEMDUNITS "Decides whether or not systemd units are installed for wg-tui" ON)
 
 # Set default build to release
 if(NOT CMAKE_BUILD_TYPE)
@@ -71,32 +74,55 @@ if(WG_TUI_INSTALL)
 	install(
 		TARGETS ${PROJECT_NAME}
 		EXPORT "wg-tuiTargets"
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-		INCLUDES DESTINATION "include"
+        LIBRARY DESTINATION ${WG_TUI_LIBDIR}
+        ARCHIVE DESTINATION ${WG_TUI_LIBDIR}
+        RUNTIME DESTINATION ${WG_TUI_BINDIR}
+		INCLUDES DESTINATION ${WG_TUI_INCDIR}
 	)
 
-	install(FILES "src/ctype.h" DESTINATION "include")
-    install(FILES "src/config.h" DESTINATION "include")
-    install(FILES "src/ipc-linux.h" DESTINATION "include")
-    install(FILES "src/configure.h" DESTINATION "include")
-    install(FILES "src/encoding.h" DESTINATION "include")
-    install(FILES "src/ipc.h" DESTINATION "include")
-    install(FILES "src/curve25519-fiat32.h" DESTINATION "include")
-    install(FILES "src/ipc-windows.h" DESTINATION "include")
-    install(FILES "src/curve25519-hacl64.h" DESTINATION "include")
-    install(FILES "src/containers.h" DESTINATION "include")
-    install(FILES "src/ipc-uapi.h" DESTINATION "include")
-    install(FILES "src/ipc-openbsd.h" DESTINATION "include")
-    install(FILES "src/terminal.h" DESTINATION "include")
-    install(FILES "src/ipc-uapi-windows.h" DESTINATION "include")
-    install(FILES "src/ipc-uapi-unix.h" DESTINATION "include")
-    install(FILES "src/version.h" DESTINATION "include")
-    install(FILES "src/netlink.h" DESTINATION "include")
-    install(FILES "src/ipc-freebsd.h" DESTINATION "include")
-    install(FILES "src/subcommands.h" DESTINATION "include")
-    install(FILES "src/curve25519.h" DESTINATION "include")
+    if(WG_TUI_WITH_INCLUDE)
+	    install(FILES "src/ctype.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/config.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-linux.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/configure.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/encoding.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/curve25519-fiat32.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-windows.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/curve25519-hacl64.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/containers.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-uapi.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-openbsd.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/terminal.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-uapi-windows.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-uapi-unix.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/version.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/netlink.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/ipc-freebsd.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/subcommands.h" DESTINATION ${WG_TUI_INCDIR})
+        install(FILES "src/curve25519.h" DESTINATION ${WG_TUI_INCDIR})
+    endif()
+
+    if(WG_TUI_WITH_BASHCOMPLETION)
+        install(FILES "src/completion/wg-quick.bash-completion" DESTINATION ${WG_TUI_BASHCOMPDIR})
+        install(FILES "src/completion/wg.bash-completion" DESTINATION ${WG_TUI_BASHCOMPDIR})
+    endif()
+
+    if(WG_TUI_WITH_MAN)
+        install(FILES "src/man/wg-quick.8" DESTINATION ${WG_TUI_MANDIR})
+        install(FILES "src/man/wg.8" DESTINATION ${WG_TUI_MANDIR})
+    endif()
+
+    if(WG_TUI_WITH_WGQUICK)
+        set(WG_TUI_BIN_PATH "${CMAKE_INSTALL_PREFIX}/${WG_TUI_BINDIR}/${PROJECT_NAME}")
+        set(WG_TUI_LINK_PATH "${CMAKE_INSTALL_PREFIX}/${WG_TUI_BINDIR}/wg")
+        install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${WG_TUI_BIN_PATH} ${WG_TUI_LINK_PATH} )")
+    endif()
+
+    if(WG_TUI_WITH_SYSTEMDUNITS)
+        install(FILES "src/systemd/wg-quick.target" DESTINATION ${WG_TUI_SYSTEMD})
+        install(FILES "src/systemd/wg-quick@.service" DESTINATION ${WG_TUI_SYSTEMD})
+    endif()
 
     # install(
     # 	EXPORT "wg-tuiTargets"

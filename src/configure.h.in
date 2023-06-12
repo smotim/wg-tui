@@ -56,14 +56,16 @@
 #define WG_TUI_CMAKE_VERSION_PATCH "${CMAKE_PATCH_VERSION}"
 
 /* wg-tui options */
-#define PREFIX "${WG_TUI_PREFIX}"
 #define BINDIR "${WG_TUI_BINDIR}"
 #define LIBDIR "${WG_TUI_LIBDIR}"
+#define INCDIR "${WG_TUI_INCDIR}"
 #define MANDIR "${WG_TUI_MANDIR}"
 #define BASHCOMPDIR "${WG_TUI_BASHCOMPDIR}"
 #define RUNSTATEDIR "${WG_TUI_RUNSTATEDIR}"
 
+#cmakedefine WG_TUI_WITH_INCLUDE
 #cmakedefine WG_TUI_WITH_BASHCOMPLETION
+#cmakedefine WG_TUI_WITH_MAN
 #cmakedefine WG_TUI_WITH_WGQUICK
 #cmakedefine WG_TUI_WITH_SYSTEMDUNITS
 
