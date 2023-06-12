@@ -4,7 +4,7 @@ import getpass
 import npyscreen
 
 
-class FormOne(npyscreen.Form):
+class FormOne(npyscreen.FormBaseNew):
 
     def create(self):
         self.address = self.add(npyscreen.TitleText, name="Address:")
@@ -76,7 +76,7 @@ class FormOne(npyscreen.Form):
         return file_number
 
 
-class FormTwo(npyscreen.Form):
+class FormTwo(npyscreen.FormBaseNew):
     def create(self):
         self.config_file = self.add(npyscreen.TitleText, name="Path to .conf file:")
         self.password = self.add(npyscreen.TitlePassword, name="Password:")
@@ -137,7 +137,7 @@ class FormTwo(npyscreen.Form):
         self.display()
 
 #TODO Если после запуска приложения зайти сразу сюда, появится системный запрос sudo пароля. Желательно заменить интрейсным
-class FormThree(npyscreen.Form):
+class FormThree(npyscreen.FormBaseNew):
     def create(self):
         self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
         self.refresh_button = self.add(npyscreen.ButtonPress, name="Refresh")
@@ -157,7 +157,7 @@ class FormThree(npyscreen.Form):
         self.display()
 
 
-class FormFour(npyscreen.Form):
+class FormFour(npyscreen.FormBaseNew):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form four")
 
