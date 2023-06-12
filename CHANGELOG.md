@@ -20,4 +20,4 @@
 - Changed CMake additional options behavior (all options are ON by default)
 - Added CMake install behavior
 - Changed configure file (added additional CMake options)
-
+- Fixed clangd (``.clangd``)
