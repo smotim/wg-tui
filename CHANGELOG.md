@@ -7,3 +7,17 @@
     - ``*.h.in`` - C language
 - Changed git ignore (``.gitignore``)
 - Changed readme
+- Removed CMake parameter ``WG_TUI_PREFIX``
+- Changed CMake parameter ``WG_TUI_BINDIR`` (``${WG_TUI_PREFIX}/bin`` -> ``${CMAKE_INSTALL_LIBDIR}``)
+- Changed CMake parameter ``WG_TUI_LIBDIR`` (``${WG_TUI_PREFIX}/lib`` -> ``${CMAKE_INSTALL_BINDIR}``)
+- Added CMake parameter ``WG_TUI_INCDIR``
+- Changed CMake parameter ``WG_TUI_MANDIR`` (``${WG_TUI_PREFIX}/share/man`` -> ``${CMAKE_INSTALL_PREFIX}/share/man``)
+- Changed CMake parameter ``WG_TUI_BASHCOMPDIR`` (``${WG_TUI_PREFIX}/share/bash-completion/completions`` -> ``${CMAKE_INSTALL_PREFIX}/share/bash-completion/completions``)
+- Added CMake parameter ``WG_TUI_SYSTEMD``
+- Changed CMake parameter ``WG_TUI_RUNSTATEDIR`` (``/var/lib`` -> ``${CMAKE_INSTALL_BINDIR}``)
+- Added CMake parameter ``WG_TUI_WITH_INCLUDE`` that decides whether or not include files for the tools are installed
+- Added CMake parameter ``WG_TUI_WITH_MAN`` that decides whether or not man files for the tools are installed
+- Changed CMake additional options behavior (all options are ON by default)
+- Added CMake install behavior
+- Changed configure file (added additional CMake options)
+
