@@ -17,7 +17,6 @@ class FormOne(npyscreen.FormBaseNew):
         self.save_button = self.add(npyscreen.ButtonPress, name="Save")
         self.save_button.whenPressed = self.save_config
 
-
     def save_config(self):
         address = self.address.value
         private_key = self.private_key.value
@@ -28,7 +27,8 @@ class FormOne(npyscreen.FormBaseNew):
         keepalive = self.keepalive.value
 
         if not address or not private_key or not public_key or not allowed_ips or not endpoint or not keepalive:
-            result = npyscreen.notify_yes_no("Some fields are empty. Do you want to save the partial configuration?", title="Confirmation")
+            result = npyscreen.notify_yes_no("Some fields are empty. Do you want to save the partial configuration?",
+                                             title="Confirmation")
             if not result:
                 return
 
@@ -136,7 +136,8 @@ class FormTwo(npyscreen.FormBaseNew):
         self.output.values = result.split("\n")
         self.display()
 
-#TODO Если после запуска приложения зайти сразу сюда, появится системный запрос sudo пароля. Желательно заменить интрейсным
+
+# TODO Если после запуска приложения зайти сразу сюда, появится системный запрос sudo пароля. Желательно заменить интрейсным
 class FormThree(npyscreen.FormBaseNew):
     def create(self):
         self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
@@ -182,7 +183,7 @@ ____    __    ____  _______        .___________. __    __   __
         self.add(npyscreen.MultiLineEdit, value=ascii_art, editable=False)
         ##выход в меню не работает почему-то
         self.add_handlers({"^Q": self.exit_app})
-        menu = self.add_menu(name="Menu", shortcut="^X")
+        menu = self.new_menu(name="Menu", shortcut="^X")
         menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one)
         menu.addItem(text="Connect", onSelect=self.switch_to_form_two)
         menu.addItem(text="Connection Status", onSelect=self.switch_to_form_three)
@@ -190,9 +191,8 @@ ____    __    ____  _______        .___________. __    __   __
         menu.addItem(text="Settings (WIP)", onSelect=self.switch_to_form_five)
         menu.addItem(text="Exit", onSelect=self.exit_app)
 
-
     def exit_app(self, *args, **kwargs):
-        self.parentApp.switchForm("MAIN")
+        self.parentApp.switchForm(None)
 
     def switch_to_form_one(self):
         self.parentApp.switchForm("ONE")
@@ -209,10 +209,8 @@ ____    __    ____  _______        .___________. __    __   __
     def switch_to_form_five(self):
         self.parentApp.switchForm("FIVE")
 
-
     def on_ok(self):
-        self.parentApp.switchForm("MAIN")
-
+        self.parentApp.switchForm(None)
 
 
 class MenuApp(npyscreen.NPSAppManaged):
