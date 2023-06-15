@@ -13,6 +13,10 @@ $ cmake ..
 $ make
 ```
 
+```sh
+$ pip install npyscreen
+```
+
 ## Launch
 ```sh
 $ python3 python/main.py
