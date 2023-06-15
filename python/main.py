@@ -211,13 +211,15 @@ ____    __    ____  _______        .___________. __    __   __
         ##выход в меню не работает почему-то
         self.add_handlers({"^Q": self.close_app})
         menu = self.new_menu(name="Menu", shortcut="^X")
-        menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one)
-        menu.addItem(text="Connect", onSelect=self.switch_to_form_two)
-        menu.addItem(text="Connection Status", onSelect=self.switch_to_form_three)
-        menu.addItem(text="Config list(WIP)", onSelect=self.switch_to_form_four)
-        menu.addItem(text="Settings (WIP)", onSelect=self.switch_to_form_five)
-        menu.addItem(text="Exit", onSelect=self.close_app)
+        menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one, shortcut="^G")
+        menu.addItem(text="Connect", onSelect=self.switch_to_form_two, shortcut="^T")
+        menu.addItem(text="Connection Status", onSelect=self.switch_to_form_three, shortcut="^S")
+        menu.addItem(text="Config list(WIP)", onSelect=self.switch_to_form_four, shortcut="^L")
+        menu.addItem(text="Options (WIP)", onSelect=self.switch_to_form_five, shortcut="^O")
+        menu.addItem(text="Exit", onSelect=self.close_app_from_menu, shortcut="^Q")
 
+    def close_app_from_menu(self):
+        self.parentApp.switchForm(None)
     def back_to_menu(self, input):
         self.parentApp.switchForm("MAIN")
 
