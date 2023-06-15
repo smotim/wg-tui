@@ -16,6 +16,8 @@ class FormOne(npyscreen.FormBaseNew):
         self.keepalive = self.add(npyscreen.TitleText, name="Keepalive:")
         self.save_button = self.add(npyscreen.ButtonPress, name="Save")
         self.save_button.whenPressed = self.save_config
+        self.add_handlers({"^B": self.back_to_menu})
+        self.add_handlers({"^Q": self.close_app})
 
     def save_config(self):
         address = self.address.value
@@ -76,6 +78,11 @@ class FormOne(npyscreen.FormBaseNew):
         return file_number
 
 
+
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+    def close_app(self, input):
+        self.parentApp.switchForm(None)
 class FormTwo(npyscreen.FormBaseNew):
     def create(self):
         self.config_file = self.add(npyscreen.TitleText, name="Path to .conf file:")
@@ -85,6 +92,8 @@ class FormTwo(npyscreen.FormBaseNew):
         self.connect_button.whenPressed = self.connect_wg_quick
         self.disconnect_button = self.add(npyscreen.ButtonPress, name="Disconnect")
         self.disconnect_button.whenPressed = self.disconnect_wg_quick
+        self.add_handlers({"^B": self.back_to_menu})
+        self.add_handlers({"^Q": self.close_app})
 
     def run_command_with_password(self, command, password):
         sudo_command = f"echo '{password}' | sudo -S {command}"
@@ -135,7 +144,10 @@ class FormTwo(npyscreen.FormBaseNew):
 
         self.output.values = result.split("\n")
         self.display()
-
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+    def close_app(self, input):
+        self.parentApp.switchForm(None)
 
 # TODO Если после запуска приложения зайти сразу сюда, появится системный запрос sudo пароля. Желательно заменить интрейсным
 class FormThree(npyscreen.FormBaseNew):
@@ -143,6 +155,8 @@ class FormThree(npyscreen.FormBaseNew):
         self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
         self.refresh_button = self.add(npyscreen.ButtonPress, name="Refresh")
         self.refresh_button.whenPressed = self.refresh_wg_show
+        self.add_handlers({"^B": self.back_to_menu})
+        self.add_handlers({"^Q": self.close_app})
 
     def beforeEditing(self):
         self.refresh_wg_show()
@@ -156,17 +170,30 @@ class FormThree(npyscreen.FormBaseNew):
             self.output.values = [f"Error occurred while executing 'wg show': {e.output.decode()}"]
 
         self.display()
-
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+    def close_app(self, input):
+        self.parentApp.switchForm(None)
 
 class FormFour(npyscreen.FormBaseNew):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form four")
-
+        self.add_handlers({"^B": self.back_to_menu})
+        self.add_handlers({"^Q": self.close_app})
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+    def close_app(self, input):
+        self.parentApp.switchForm(None)
 
 class FormFive(npyscreen.Form):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form five")
-
+        self.add_handlers({"^B": self.back_to_menu})
+        self.add_handlers({"^Q": self.close_app})
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+    def close_app(self, input):
+        self.parentApp.switchForm(None)
 
 class MenuForm(npyscreen.FormWithMenus):
     def create(self):
@@ -182,16 +209,19 @@ ____    __    ____  _______        .___________. __    __   __
         self.add(npyscreen.TitleFixedText, name="To close the application, press Ctrl+Q", editable=False)
         self.add(npyscreen.MultiLineEdit, value=ascii_art, editable=False)
         ##выход в меню не работает почему-то
-        self.add_handlers({"^Q": self.exit_app})
+        self.add_handlers({"^Q": self.close_app})
         menu = self.new_menu(name="Menu", shortcut="^X")
         menu.addItem(text="Generate Config", onSelect=self.switch_to_form_one)
         menu.addItem(text="Connect", onSelect=self.switch_to_form_two)
         menu.addItem(text="Connection Status", onSelect=self.switch_to_form_three)
         menu.addItem(text="Config list(WIP)", onSelect=self.switch_to_form_four)
         menu.addItem(text="Settings (WIP)", onSelect=self.switch_to_form_five)
-        menu.addItem(text="Exit", onSelect=self.exit_app)
+        menu.addItem(text="Exit", onSelect=self.close_app)
 
-    def exit_app(self, *args, **kwargs):
+    def back_to_menu(self, input):
+        self.parentApp.switchForm("MAIN")
+
+    def close_app(self, input):
         self.parentApp.switchForm(None)
 
     def switch_to_form_one(self):
